@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lilburn Chevron Drawer Count</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        label {
+            display: inline-block;
+            text-align: left;
+        }
+
+        input[type="text"] {
+            
+            padding: 8px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        .rtnd {
+            width: 60px;
+        }
+
+        #calculate {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #calculate:hover {
+            background-color: #0056b3;
+        }
+
+        .output-section {
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+
+        #safeDrop {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Lilburn Chevron Drawer Count</h2>
+
+    <form>
+        <label for="nickels">$.05 x :</label>
+        <input id="nickels" type="text" placeholder="How many Nickels?">
+    </form>
+
+    <form>
+        <label for="dimes">$.10 x :</label>
+        <input id="dimes" type="text" placeholder="How many Dimes?">
+    </form>
+
+    <form>
+        <label for="quarters">$.25 x :</label>
+        <input id="quarters" type="text" placeholder="How many Quarters?">
+    </form>
+
+    <form>
+        <label for="dollars">$1 x :</label>
+        <input id="dollars" type="text" placeholder="How many Dollars?">
+        w/ $<input id="dollarsRtnd" type="text" value="35" class="rtnd"> kept.
+    </form>
+
+    <form>
+        <label for="fives">$5 x :</label>
+        <input id="fives" type="text" placeholder="How many Fives?">
+        w/ $<input id="fivesRtnd" type="text" value="60" class="rtnd"> kept.
+    </form>
+
+    <form>
+        <label for="tens">$10 x :</label>
+        <input id="tens" type="text" placeholder="How many Tens?">
+        w/ $<input id="tensRtnd" type="text" value="60" class="rtnd"> kept.
+    </form>
+
+    <form>
+        <label for="twenties">$20 x :</label>
+        <input id="twenties" type="text" placeholder="How many Twenties?">
+        w/ $<input id="twentiesRtnd" type="text" value="60" class="rtnd"> kept.
+    </form>
+
+    <form>
+        <label for="fifties">$50 x :</label>
+        <input id="fifties" type="text" placeholder="How many Fifties?">
+    </form>
+
+    <form>
+        <label for="hundreds">$100 x :</label>
+        <input id="hundreds" type="text" placeholder="How many Hundreds?">
+    </form>
+
+    <form>
+        <label for="checks">Total checks:</label>
+        <input id="checks" type="text" placeholder="Total Check Value?">
+    </form>
+
+    <button type="button" id="calculate">Calculate!</button>
+
+    <div class="output-section">
+        <p id="nickelVal"></p>
+        <p id="dimeVal"></p>
+        <p id="quarterVal"></p>
+        <p id="dollarVal"></p>
+        <p id="fiveVal"></p>
+        <p id="tenVal"></p>
+        <p id="twentyVal"></p>
+        <p id="fiftyVal"></p>
+        <p id="hundredVal"></p>
+        <p id="checkVal"></p>
+        <p id="drawerTotalVal"></p>
+        <p id="safeDrop"></p>
+        <p id="newNickelVal"></p>
+        <p id="newDimeVal"></p>
+        <p id="newQuarterVal"></p>
+        <p id="newDollarVal"></p>
+        <p id="newFiveVal"></p>
+        <p id="newTenVal"></p>
+        <p id="newTwentyVal"></p>
+        <p id="newFiftyVal"></p>
+        <p id="newHundredVal"></p>
+        <p id="newDrawerTotal"></p>
+    </div>
+
+    <script>
+        //... (JavaScript code from previous response)
+        function getInputValue(id) {
+            let value = document.getElementById(id).value;
+            if (!value) {
+                return 0;
+            }
+            try {
+                return Function(`return ${value};`)();
+            } catch (e) {
+                return 0;
+            }
+        }
+
+        function formatCurrency(amount) {
+            return amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+        }
+
+        function droppedDenomsSD(newDenom) {
+            for (let i = 0; i < newDenom.length; i++) {
+                const droppedAmount = newDenom[i][6] - newDenom[i][0];
+                const totalValue = newDenom[i][0] * newDenom[i][1];
+                const output = newDenom[i][3] + newDenom[i][0] + " = " + formatCurrency(totalValue);
+                document.getElementById(newDenom[i][5]).innerHTML = droppedAmount > 0 ? output + " (w/ " + droppedAmount + " dropped)" : output;
+            }
+        }
+
+        function safeDrop(dTotal, denomCount, checkSD) {
+            let newDrawerCount = denomCount.map(item => [...item]);
+            let newDrawerTotal = dTotal;
+            let checkAmt = checkSD;
+
+            if (dTotal > 225) {
+                if (checkAmt > 0) {
+                    for (let i = denomCount.length - 1; i >= 0; i--) {
+                        for (let j = newDrawerCount[i][0] - 1; newDrawerTotal > 225 && j * denomCount[i][1] >= denomCount[i][4]; j--) {
+                            newDrawerCount[i][0] = j;
+                            newDrawerTotal -= denomCount[i][1];
+                            if (newDrawerTotal < 225) break;
+                        }
+                    }
+                    let safeDropAmt = (dTotal - newDrawerTotal + checkAmt);
+                    document.getElementById('newDrawerTotal').innerHTML = "New Drawer Total = " + formatCurrency(newDrawerTotal);
+                    document.getElementById('safeDrop').innerHTML = "Safe Drop = " + formatCurrency(safeDropAmt);
+                    droppedDenomsSD(newDrawerCount);
+                } else {
+                    for (let i = denomCount.length - 1; i >= 0; i--) {
+                        for (let j = newDrawerCount[i][0] - 1; newDrawerTotal > 225 && j * denomCount[i][1] >= denomCount[i][4]; j--) {
+                            newDrawerCount[i][0] = j;
+                            newDrawerTotal -= denomCount[i][1];
+                            if (newDrawerTotal < 225) break;
+                        }
+                    }
+                    let safeDropAmt = dTotal - newDrawerTotal;
+                    document.getElementById('newDrawerTotal').innerHTML = "New Drawer Total = " + formatCurrency(newDrawerTotal);
+                    document.getElementById('safeDrop').innerHTML = "Safe Drop = " + formatCurrency(safeDropAmt);
+                    droppedDenomsSD(newDrawerCount);
+                }
+            } else {
+                document.getElementById('newDrawerTotal').innerHTML = "New Drawer Total = " + formatCurrency(dTotal);
+                document.getElementById('safeDrop').innerHTML = checkAmt > 0 ? "Safe Drop = " + formatCurrency(checkAmt) : "There is no Safe Drop.";
+                denomCount.forEach(item => document.getElementById(item[5]).innerHTML = item[3] + item[0] + " = " + formatCurrency(item[0] * item[1]));
+            }
+        }
+
+        function calculateDrawer() {
+            const nickelAmt = getInputValue('nickels');
+            const dimeAmt = getInputValue('dimes');
+            const quarterAmt = getInputValue('quarters');
+            const dollarAmt = getInputValue('dollars');
+            const fiveAmt = getInputValue('fives');
+            const tenAmt = getInputValue('tens');
+            const twentyAmt = getInputValue('twenties');
+            const fiftyAmt = getInputValue('fifties');
+            const hundredAmt = getInputValue('hundreds');
+            const dollarsRtnd = getInputValue('dollarsRtnd');
+            const fivesRtnd = getInputValue('fivesRtnd');
+            const tensRtnd = getInputValue('tensRtnd');
+            const twentiesRtnd = getInputValue('twentiesRtnd');
+            const checkAmt = getInputValue('checks');
+
+            const drawerArray = [
+                [nickelAmt, 0.05, 'nickelVal', "$.05 x ", 4, 'newNickelVal', getInputValue('nickels')],
+                [dimeAmt, 0.10, 'dimeVal', "$.10 x ", 5, 'newDimeVal', getInputValue('dimes')],
+                [quarterAmt, 0.25, 'quarterVal', "$.25 x ", 13, 'newQuarterVal', getInputValue('quarters')],
+                [dollarAmt, 1, 'dollarVal', "$1 x ", dollarsRtnd, 'newDollarVal', getInputValue('dollars')],
+                [fiveAmt, 5, 'fiveVal', "$5 x ", fivesRtnd, 'newFiveVal', getInputValue('fives')],
+                [tenAmt, 10, 'tenVal', "$10 x ", tensRtnd, 'newTenVal', getInputValue('tens')],
+                [twentyAmt, 20, 'twentyVal', "$20 x ", twentiesRtnd, 'newTwentyVal', getInputValue('twenties')],
+                [fiftyAmt, 50, 'fiftyVal', "$50 x ", 0, 'newFiftyVal', getInputValue('fifties')],
+                [hundredAmt, 100, 'hundredVal', "$100 x ", 0, 'newHundredVal', getInputValue('hundreds')],
+            ];
+
+            let drawerTotal = drawerArray.reduce((acc, curr) => acc + curr[0] * curr[1], 0) + checkAmt;
+            document.getElementById('drawerTotalVal').innerHTML = "Drawer Total = " + formatCurrency(drawerTotal);
+            drawerTotal -= checkAmt;
+
+            drawerArray.forEach(item => document.getElementById(item[2]).innerHTML = item[3] + item[0] + " = " + formatCurrency(item[0] * item[1]));
+            safeDrop(drawerTotal, drawerArray, checkAmt);
+        }
+
+        document.getElementById("calculate").addEventListener("click", calculateDrawer);
+
+        const inputFields = document.querySelectorAll('input[type="text"]');
+        inputFields.forEach(input => {
+            input.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    calculateDrawer();
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>

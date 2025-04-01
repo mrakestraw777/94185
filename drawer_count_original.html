@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<title>Lilburn Chevron Drawer Count</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<style type="text/css">
+	
+	form {
+		font-size: 1.5em;
+	}
+
+	input {
+		width: 37%;
+	height: 90%;
+	margin-top: 5px;
+	padding: 1.5% 1.5%;
+	box-sizing: border-box;
+	}
+
+	input[type=number]:focus {
+		background-color: #33f0f7;
+	}
+
+	#safeDrop {
+		color: red;
+	}
+
+	.rtnd {
+		width: 10%;
+	}
+
+</style>
+
+</head>
+
+<body>
+
+<h2>Enter the number for each denomination below:  </h2>
+	<form> $.05 x :    
+	   <input id='nickels' type='text' placeholder='How many nickels?'>
+	</form>
+
+	<form> $.10 x :  
+	   <input id='dimes' type='text' placeholder='How many dimes?'>
+	</form>
+
+	<form> $.25 x :  
+	   <input id='quarters' type='text' placeholder='How many quarters?'>
+	</form>
+
+	<form> $1 x :    
+	   <input id='dollars' type='text' placeholder='How many dollars?'>
+	   w/ $<input id="dollarsRtnd" type="number" value='35' class="rtnd"> kept.
+	</form>
+
+	<form> $5 x :  
+	   <input id='fives' type='text' placeholder='How many fives?'>
+	   w/ $<input id="fivesRtnd" type="number" value='60' class="rtnd"> kept.
+	</form>
+
+	<form> $10 x :  
+	   <input id='tens' type='text' placeholder='How many tens?'>
+	   w/ $<input id="tensRtnd" type="number" value='60' class="rtnd"> kept.
+	</form>
+
+	<form> $20 x :    
+	   <input id='twenties' type='text' placeholder='How many twenties?'>
+	   w/ $<input id="twentiesRtnd" type="number" value='60' class="rtnd"> kept.
+	</form>
+
+	<form> $50 x :  
+	   <input id='fifties' type='text' placeholder='How many fifties?'>
+	</form>
+
+	<form> $100 x :  
+	   <input id='hundreds' type='text' placeholder='How many hundreds?'>
+	</form>
+	
+	<form> Total value of checks:  
+	   <input id='checks' type='text' placeholder='Any checks?'>
+	</form>
+
+
+<button type="button" id="calculate">Calculate!</button>
+
+<p id='nickelVal'></p>
+<p id='dimeVal'></p>
+<p id='quarterVal'></p>
+<p id='dollarVal'></p>
+<p id='fiveVal'></p>
+<p id='tenVal'></p>
+<p id='twentyVal'></p>
+<p id='fiftyVal'></p>
+<p id='hundredVal'></p>
+<p id='checkVal'></p>
+<p id='drawerTotalVal'></p>
+
+
+
+<br>
+<p id='newDrawerTotal'></p>
+<b><p id='safeDrop'></p></b>
+
+<p id='newNickelVal'></p>
+<p id='newDimeVal'></p>
+<p id='newQuarterVal'></p>
+<p id='newDollarVal'></p>
+<p id='newFiveVal'></p>
+<p id='newTenVal'></p>
+<p id='newTwentyVal'></p>
+<p id='newFiftyVal'></p>
+<p id='newHundredVal'></p>
+
+
+<script>
+
+function droppedDenomsSD(newDenom) {
+
+	
+	for (let i=0; i < newDenom.length; i++) {
+		if (newDenom[i][0] != newDenom[i][6]){
+			document.getElementById(newDenom[i][5]).innerHTML= newDenom[i][3] + 
+	  		 		newDenom[i][0]+ " = $" + (newDenom[i][0]* newDenom[i][1]).toFixed(2) + " (w/ "  + (newDenom[i][6] - newDenom[i][0]) +  " dropped)";
+		}
+		else {
+			document.getElementById(newDenom[i][5]).innerHTML= newDenom[i][3] + 
+	  		 		newDenom[i][0]+ " = $" + (newDenom[i][0]* newDenom[i][1]).toFixed(2);
+		}
+	}
+};
+
+
+function safeDrop(dTotal, denomCount, checkSD){ //Safedrop function
+	let newDrawerCount = denomCount;
+	let newDrawerTotal = dTotal
+	let checkAmt= checkSD
+
+	if (dTotal > 225 ) {  //This is the initial check for the drawerTotal//
+
+
+			if (checkAmt > 0) {
+      
+				for (let i = (denomCount.length - 1); i >= 0; i--) {
+
+
+				
+
+						for (let j = newDrawerCount[i][0] - 1; newDrawerTotal > 225 & j*denomCount[i][1] >= denomCount[i][4]; j--) {
+				newDrawerCount[i][0] = j;
+		
+				newDrawerTotal -= denomCount[i][1];
+			
+
+				if (newDrawerTotal < 225) { //
+			           	break;          // This 'if' checks if the current newDrawerTotal is < 18
+					    	     } //
+                
+                
+											  } //This is the end of the 'for' block that decrements the current denomination
+		
+				let safeDropAmt = (newDrawerTotal-dTotal-checkAmt).toFixed(2)
+				console.log("The safeDropAmt is " + safeDropAmt);
+				console.log("The newDrawerCount is " + newDrawerCount);
+				//console.log("The is " + )
+		
+				document.getElementById('newDrawerTotal').innerHTML = "New Drawer Total = $" + newDrawerTotal.toFixed(2);
+
+				document.getElementById('safeDrop').innerHTML = "Safe Drop = $" + safeDropAmt;
+
+				droppedDenomsSD(denomCount);
+					
+
+	 
+
+
+		}
+		
+		
+     } //if check > 0
+
+		else { //if dTotal is > 225 and there's no check
+
+		for (let i = (denomCount.length - 1); i >= 0; i--) {
+
+	 
+        
+         
+				for (let j = newDrawerCount[i][0]-1; newDrawerTotal > 225 & j*denomCount[i][1] >= denomCount[i][4]; j--) {
+				newDrawerCount[i][0] = j;
+		
+				newDrawerTotal -= denomCount[i][1];
+			
+
+				if (newDrawerTotal < 225) { //
+			           	break;          // This 'if' checks if the current newDrawerTotal is < 18
+					    	     } //
+                
+                
+											  } //This is the end of the 'for' block that decrements the current denomination
+		
+				let safeDropAmt = (newDrawerTotal-dTotal).toFixed(2)
+				console.log("The safeDropAmt is " + safeDropAmt);
+				console.log("The newDrawerCount is " + newDrawerCount);
+		
+				document.getElementById('newDrawerTotal').innerHTML = "New Drawer Total = $" + newDrawerTotal.toFixed(2);
+
+				document.getElementById('safeDrop').innerHTML = "Safe Drop = $" + safeDropAmt;
+
+				droppedDenomsSD(denomCount);
+
+
+		}
+		
+		} //if dTotal is > 225 and there's no check
+
+
+		
+	}  //Ending bracket for if (dTotal> 18)
+
+
+
+
+	else {
+			if(checkAmt > 0){
+				document.getElementById('newDrawerTotal').innerHTML = "New Drawer Total = $" + newDrawerTotal.toFixed(2);
+				document.getElementById('safeDrop').innerHTML = "Safe Drop = $" + checkAmt;
+				
+				for (let i=0; i < newDrawerCount.length; i++) {
+	   
+	   				document.getElementById(newDrawerCount[i][5]).innerHTML= newDrawerCount[i][3] + 
+	  		 		newDrawerCount[i][0]+ " = $" + (newDrawerCount[i][0]* newDrawerCount[i][1]).toFixed(2); }
+			}
+
+
+		else {
+			document.getElementById('newDrawerTotal').innerHTML = "New Drawer Total = $" + newDrawerTotal.toFixed(2);
+
+			document.getElementById('safeDrop').innerHTML= "There is no Safe Drop." 
+		}
+	     }
+
+	}//Safedrop function
+
+	
+ 
+
+
+
+function calculateDrawer(){
+	//The block below contains the form info for the different denominations
+
+	const nickelAmt = (Function(`return ${document.getElementById('nickels').value};`))()
+	const dimeAmt = (Function(`return ${document.getElementById('dimes').value};`))()
+	const quarterAmt = (Function(`return ${document.getElementById('quarters').value};`))()
+	const dollarAmt = (Function(`return ${document.getElementById('dollars').value};`))()
+	const fiveAmt = (Function(`return ${document.getElementById('fives').value};`))()
+	const tenAmt = (Function(`return ${document.getElementById('tens').value};`))()
+	const twentyAmt = (Function(`return ${document.getElementById('twenties').value};`))()
+	const fiftyAmt = (Function(`return ${document.getElementById('fifties').value};`))()
+	const hundredAmt = (Function(`return ${document.getElementById('hundreds').value};`))()
+
+	// const nickelsRtnd = parseInt(document.getElementById('nickelsRtnd').value);
+	// const dimesRtnd = parseInt(document.getElementById('dimesRtnd').value);
+	// const quartersRtnd = parseInt(document.getElementById('quartersRtnd').value);
+	const dollarsRtnd = parseInt(document.getElementById('dollarsRtnd').value);
+	const fivesRtnd = parseInt(document.getElementById('fivesRtnd').value);
+	const tensRtnd = parseInt(document.getElementById('tensRtnd').value);
+	const twentiesRtnd = parseInt(document.getElementById('twentiesRtnd').value);
+	// const fiftiesRtnd = parseInt(document.getElementById('fiftiesRtnd').value);
+	// const hundredsRtnd = parseInt(document.getElementById('hundredsRtnd').value);
+	
+	const nickelAmtOrig = (Function(`return ${document.getElementById('nickels').value};`))()
+	const dimeAmtOrig = (Function(`return ${document.getElementById('dimes').value};`))()
+	const quarterAmtOrig = (Function(`return ${document.getElementById('quarters').value};`))()
+	const dollarAmtOrig = (Function(`return ${document.getElementById('dollars').value};`))()
+	const fiveAmtOrig = (Function(`return ${document.getElementById('fives').value};`))()
+	const tenAmtOrig = (Function(`return ${document.getElementById('tens').value};`))()
+	const twentyAmtOrig = (Function(`return ${document.getElementById('twenties').value};`))()
+	const fiftyAmtOrig = (Function(`return ${document.getElementById('fifties').value};`))()
+	const hundredAmtOrig = (Function(`return ${document.getElementById('hundreds').value};`))()
+
+	let checkAmt = (Function(`return ${document.getElementById('checks').value};`))()
+
+	const drawerArray = [
+			[nickelAmt, .05, 'nickelVal', "$.05 x ", 4, 'newNickelVal', nickelAmtOrig ,], 
+			[dimeAmt, .10, 'dimeVal', "$.10 x ", 5, 'newDimeVal', dimeAmtOrig ,], 
+			[quarterAmt, .25, 'quarterVal', "$.25 x ", 13, 'newQuarterVal', quarterAmtOrig ,],
+			[dollarAmt, 1, 'dollarVal', "$1 x ", dollarsRtnd, 'newDollarVal', dollarAmtOrig ,], 
+			[fiveAmt, 5, 'fiveVal', "$5 x ", fivesRtnd, 'newFiveVal', fiveAmtOrig ,], 
+			[tenAmt, 10, 'tenVal', "$10 x ", tensRtnd, 'newTenVal', tenAmtOrig ,],
+			[twentyAmt, 20, 'twentyVal', "$20 x ", twentiesRtnd, 'newTwentyVal', twentyAmtOrig ,], 
+			[fiftyAmt, 50, 'fiftyVal', "$50 x ", 0, 'newFiftyVal', fiftyAmtOrig ,], 
+			[hundredAmt, 100, 'hundredVal', "$100 x ", 0, 'newHundredVal', hundredAmtOrig ,], 
+			];
+
+	drawerTotal = 0
+
+	//<----The following loop should go through all the denominations and post them to the proper ID'd paragraphs ----->
+
+	for (let i=0; i < drawerArray.length; i++) {
+	   
+	   document.getElementById(drawerArray[i][2]).innerHTML= drawerArray[i][3] + 
+	   drawerArray[i][0]+ " = $" + (drawerArray[i][0]* drawerArray[i][1]).toFixed(2);
+
+	   drawerTotal += drawerArray[i][0] * drawerArray[i][1].toFixed(2);
+				    
+									} //This is the for loop for the inital document denomenation logging.
+	
+	
+
+	if (isNaN(checkAmt)){
+
+	checkAmt = 0;
+				}
+	else {
+		checkAmt = checkAmt
+	}
+
+
+	drawerTotal += checkAmt;
+
+	document.getElementById('drawerTotalVal').innerHTML = "Drawer Total = $" + drawerTotal.toFixed(2);
+
+	drawerTotal -= checkAmt;
+
+
+	safeDrop(drawerTotal, drawerArray, checkAmt);
+
+
+	
+
+	
+
+
+
+
+
+  
+	} //this is the end for the function calculateDrawer()
+
+document.getElementById("calculate").onclick = function() {
+  calculateDrawer();
+}
+
+
+
+</script>
+
+
+</body>
+
+
+
+
+
+</html>
